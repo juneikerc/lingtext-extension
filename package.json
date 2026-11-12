@@ -1,0 +1,27 @@
+{
+  "name": "lingtext-extension",
+  "version": "1.4.0",
+  "description": "LingText for YouTube: interactive English subtitles on YouTube with click-to-translate and a saved vocabulary list.",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build",
+    "package": "npm run build && sh scripts/package.sh"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.0-beta.28",
+    "@types/chrome": "^0.0.287",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.3"
+  }
+}
