@@ -58,6 +58,49 @@ const STYLES = `
   box-shadow: -8px 0 currentColor, 8px 0 currentColor;
 }
 
+.lingtext-loop-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 22px;
+  margin: 0 8px 6px 6px;
+  padding: 0 8px 0 7px;
+  border: 1px solid rgba(15, 158, 218, 0.55);
+  border-radius: 999px;
+  background: rgba(10, 10, 10, 0.78);
+  color: #7dd3fc;
+  font-family: "YouTube Noto", Roboto, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  vertical-align: middle;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.lingtext-loop-badge svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.lingtext-loop-badge-close {
+  margin-left: 1px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+}
+
+.lingtext-loop-badge:hover .lingtext-loop-badge-close {
+  color: #ffffff;
+}
+
+.lingtext-loop-badge:focus-visible {
+  outline: 2px solid rgba(15, 158, 218, 0.75);
+  outline-offset: 2px;
+}
+
 .lingtext-container.lingtext-transitioning {
   opacity: 0.78;
 }

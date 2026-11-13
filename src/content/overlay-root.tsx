@@ -24,6 +24,11 @@ import {
   watchCapturedTranscripts,
 } from "./caption-track-loader";
 import { stabilizeCues } from "./cue-stabilizer";
+import {
+  getPlayerVideo,
+  useHoverPause,
+  useListeningShortcuts,
+} from "./listening-controls";
 import { setNativeCcHidden } from "./native-cc";
 import {
   getCurrentVideoId,
@@ -376,7 +381,7 @@ export default function OverlayRoot({ shadowRoot }: OverlayRootProps) {
       return;
     }
 
-    const video = document.querySelector<HTMLVideoElement>("video");
+    const video = getPlayerVideo();
     if (!video) {
       setCurrentSubtitle("");
       return;
@@ -578,6 +583,30 @@ export default function OverlayRoot({ shadowRoot }: OverlayRootProps) {
     currentSubtitle,
     displayedSubtitle,
   ]);
+
+  const isWatchPage = window.location.pathname === "/watch";
+  const { loopCue, stopLoop } = useListeningShortcuts({
+    cues: transcriptCues,
+    // Only with cue timings (not the DOM fallback) and while the overlay is
+    // showing them.
+    enabled:
+      settings.listeningShortcuts &&
+      isWatchPage &&
+      useTranscript &&
+      transcriptCues.length > 0 &&
+      nativeCaptionsActive,
+    videoId,
+  });
+
+  const subtitleVisible =
+    isWatchPage && Boolean(playerRect && displayedSubtitle);
+  const hoverPause = useHoverPause({
+    enabled: settings.pauseOnHover,
+    // Popups only render with the subtitle, so a hidden one holds nothing.
+    holdOpen: subtitleVisible && Boolean(popup || selectionPopup),
+    subtitleVisible,
+    videoId,
+  });
 
   const handleWordClick = useCallback(
     async (word: string, lower: string, x: number, y: number) => {
@@ -914,11 +943,42 @@ export default function OverlayRoot({ shadowRoot }: OverlayRootProps) {
         >
           <span className="lingtext-drag-handle-dots" aria-hidden="true" />
         </button>
+        {loopCue && (
+          <button
+            type="button"
+            className="lingtext-loop-badge"
+            aria-label="Quitar bucle"
+            title="Repitiendo esta línea. Clic o B para quitar el bucle"
+            onClick={(event) => {
+              event.stopPropagation();
+              stopLoop();
+            }}
+            onMouseUp={(event) => event.stopPropagation()}
+          >
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path
+                d="M3 7.5V6a2 2 0 0 1 2-2h7m-2-2 2 2-2 2M13 8.5V10a2 2 0 0 1-2 2H4m2 2-2-2 2-2"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span>Bucle</span>
+            <span className="lingtext-loop-badge-close" aria-hidden="true">
+              ×
+            </span>
+          </button>
+        )}
         <SubtitleOverlay
           text={displayedSubtitle}
           unknownSet={unknownSet}
           phrases={phrases}
           onWordClick={handleWordClick}
+          onMouseEnter={hoverPause.onMouseEnter}
+          onMouseMove={hoverPause.onMouseMove}
+          onMouseLeave={hoverPause.onMouseLeave}
         />
       </div>
 

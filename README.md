@@ -15,8 +15,15 @@ phrase to translate it whole, and save what you want to learn.
 
 ## Features
 
-- Click-to-translate on every word of YouTube's English subtitles, without
-  pausing the video.
+- Click-to-translate on every word of YouTube's English subtitles.
+- Pause on hover: the video pauses while the mouse is over the subtitle and
+  resumes when it leaves (only if the extension paused it). It stays paused
+  while a word or phrase popup is open. Can be turned off in the popup.
+- Keyboard shortcuts to listen again: `R` repeats the current line,
+  `Shift+←` / `Shift+→` jump to the previous or next line, and `B` loops the
+  current line until you press it again or seek away. They need the captured
+  transcript's timings, so they are off when the overlay falls back to
+  reading YouTube's rendered captions. Can be turned off in the popup.
 - Phrase translation by selecting several words.
 - Line-by-line subtitles, including YouTube's auto-generated captions.
 - Save words and phrases; saved words are highlighted when they appear again.
@@ -35,6 +42,7 @@ src/
     caption-parser.ts      # json3 / srv1 / srv3 parsing
     cue-stabilizer.ts      # merges and de-overlaps cues into readable lines
     subtitle-engine.ts     # cue lookup by playback time
+    listening-controls.ts  # repeat/previous/next/loop shortcuts and pause on hover
     overlay-root.tsx       # overlay UI, word/phrase popups, DOM caption fallback
   background/              # service worker: message router + chrome.storage.local store
   popup/                   # toolbar popup

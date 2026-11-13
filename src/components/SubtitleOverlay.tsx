@@ -11,6 +11,9 @@ interface SubtitleOverlayProps {
   unknownSet: Set<string>;
   phrases: string[][];
   onWordClick: (word: string, lower: string, x: number, y: number) => void;
+  onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
+  onMouseMove?: React.MouseEventHandler<HTMLDivElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 export default function SubtitleOverlay({
@@ -18,6 +21,9 @@ export default function SubtitleOverlay({
   unknownSet,
   phrases,
   onWordClick,
+  onMouseEnter,
+  onMouseMove,
+  onMouseLeave,
 }: SubtitleOverlayProps) {
   const tokens = tokenize(text);
 
@@ -84,7 +90,12 @@ export default function SubtitleOverlay({
   };
 
   return (
-    <div className="lingtext-subtitle-overlay">
+    <div
+      className="lingtext-subtitle-overlay"
+      onMouseEnter={onMouseEnter}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+    >
       {tokens.map((t, idx) => {
         if (!t.isWord) {
           return <span key={idx}>{t.text}</span>;

@@ -11,11 +11,17 @@ export function isChromeBrowser(): boolean {
   );
 }
 
+function readBoolean(value: unknown, fallback: boolean): boolean {
+  return typeof value === "boolean" ? value : fallback;
+}
+
 export function getDefaultExtensionSettings(): ExtensionSettings {
   return {
     translator: isChromeBrowser() ? TRANSLATORS.CHROME : TRANSLATORS.MYMEMORY,
     captionLanguage: "en",
     hideNativeCc: true,
+    listeningShortcuts: true,
+    pauseOnHover: true,
   };
 }
 
@@ -28,7 +34,12 @@ export function normalizeExtensionSettings(
   const next: ExtensionSettings = {
     translator: settings?.translator ?? defaults.translator,
     captionLanguage: "en",
-    hideNativeCc: settings?.hideNativeCc ?? defaults.hideNativeCc,
+    hideNativeCc: readBoolean(settings?.hideNativeCc, defaults.hideNativeCc),
+    listeningShortcuts: readBoolean(
+      settings?.listeningShortcuts,
+      defaults.listeningShortcuts
+    ),
+    pauseOnHover: readBoolean(settings?.pauseOnHover, defaults.pauseOnHover),
   };
 
   if (!Object.values(TRANSLATORS).includes(next.translator)) {

@@ -96,6 +96,7 @@ export default function Popup() {
         <section className="card">
           <h2 className="section-title">Traductor</h2>
           <select
+            aria-label="Traductor"
             className="translator-select"
             value={settings.translator}
             onChange={(event) =>
@@ -110,13 +111,75 @@ export default function Popup() {
           </select>
         </section>
 
+        <section className="card">
+          <h2 className="section-title">Escucha</h2>
+          <div className="toggle-list">
+            <label className="toggle-row">
+              <span className="toggle-text">
+                <span className="toggle-label">Atajos de teclado</span>
+                <span className="toggle-hint">
+                  Repetir la línea, cambiar de línea y repetirla en bucle.
+                </span>
+              </span>
+              <input
+                type="checkbox"
+                role="switch"
+                className="toggle-input"
+                checked={settings.listeningShortcuts}
+                onChange={(event) =>
+                  updateSettings({ listeningShortcuts: event.target.checked })
+                }
+              />
+            </label>
+            <label className="toggle-row">
+              <span className="toggle-text">
+                <span className="toggle-label">Pausar al pasar el ratón</span>
+                <span className="toggle-hint">
+                  El vídeo se pausa mientras el ratón está sobre el subtítulo.
+                </span>
+              </span>
+              <input
+                type="checkbox"
+                role="switch"
+                className="toggle-input"
+                checked={settings.pauseOnHover}
+                onChange={(event) =>
+                  updateSettings({ pauseOnHover: event.target.checked })
+                }
+              />
+            </label>
+          </div>
+        </section>
+
         <section className="help-section">
           <h2 className="section-title">Cómo usar</h2>
           <ol>
             <li>Activa los subtítulos en inglés en YouTube</li>
             <li>Haz clic en palabras para traducirlas</li>
             <li>Guarda palabras y frases para repasarlas</li>
+            {settings.pauseOnHover && (
+              <li>Pasa el ratón por el subtítulo para pausar el vídeo</li>
+            )}
           </ol>
+          {settings.listeningShortcuts && (
+            <>
+              <h3 className="help-subtitle">Atajos</h3>
+              <dl className="shortcut-list">
+                <dt>
+                  <kbd>R</kbd>
+                </dt>
+                <dd>Repetir la línea actual</dd>
+                <dt>
+                  <kbd>Shift</kbd> + <kbd>←</kbd> / <kbd>→</kbd>
+                </dt>
+                <dd>Línea anterior o siguiente</dd>
+                <dt>
+                  <kbd>B</kbd>
+                </dt>
+                <dd>Repetir la línea en bucle (pulsa otra vez para quitarlo)</dd>
+              </dl>
+            </>
+          )}
         </section>
 
         <a

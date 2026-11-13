@@ -20,6 +20,10 @@ export interface ExtensionSettings {
   translator: Translator;
   captionLanguage: "en";
   hideNativeCc: boolean;
+  /** R, Shift+←/→ and B on the watch page (needs a captured transcript). */
+  listeningShortcuts: boolean;
+  /** Pause while the mouse is over the subtitle; resume when it leaves. */
+  pauseOnHover: boolean;
 }
 
 export interface WordPopupState {
