@@ -1,6 +1,6 @@
 {
   "name": "lingtext-extension",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "LingText for YouTube: interactive English subtitles on YouTube with click-to-translate and a saved vocabulary list.",
   "license": "Apache-2.0",
   "private": true,

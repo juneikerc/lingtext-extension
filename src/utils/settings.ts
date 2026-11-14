@@ -22,6 +22,7 @@ export function getDefaultExtensionSettings(): ExtensionSettings {
     hideNativeCc: true,
     listeningShortcuts: true,
     pauseOnHover: true,
+    blurSubtitles: false,
   };
 }
 
@@ -40,6 +41,7 @@ export function normalizeExtensionSettings(
       defaults.listeningShortcuts
     ),
     pauseOnHover: readBoolean(settings?.pauseOnHover, defaults.pauseOnHover),
+    blurSubtitles: readBoolean(settings?.blurSubtitles, defaults.blurSubtitles),
   };
 
   if (!Object.values(TRANSLATORS).includes(next.translator)) {

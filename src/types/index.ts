@@ -24,6 +24,8 @@ export interface ExtensionSettings {
   listeningShortcuts: boolean;
   /** Pause while the mouse is over the subtitle; resume when it leaves. */
   pauseOnHover: boolean;
+  /** Blur the subtitle text until the mouse moves over it (listening practice). */
+  blurSubtitles: boolean;
 }
 
 export interface WordPopupState {

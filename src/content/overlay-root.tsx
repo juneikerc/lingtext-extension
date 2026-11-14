@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { PointerEvent as ReactPointerEvent } from "react";
+import type {
+  MouseEvent as ReactMouseEvent,
+  PointerEvent as ReactPointerEvent,
+} from "react";
 
 import SelectionPopup from "@/components/SelectionPopup";
 import SubtitleOverlay from "@/components/SubtitleOverlay";
@@ -146,6 +149,9 @@ export default function OverlayRoot({ shadowRoot }: OverlayRootProps) {
   const [subtitleOffset, setSubtitleOffset] = useState<SubtitleOffset>(
     DEFAULT_SUBTITLE_OFFSET
   );
+
+  // Blur mode: the line is readable only while the mouse is over it.
+  const [blurRevealed, setBlurRevealed] = useState(false);
 
   const [popup, setPopup] = useState<WordPopupState | null>(null);
   const [selectionPopup, setSelectionPopup] =
@@ -608,6 +614,43 @@ export default function OverlayRoot({ shadowRoot }: OverlayRootProps) {
     videoId,
   });
 
+  // A hidden subtitle gets no mouseleave; start the next line blurred.
+  useEffect(() => {
+    if (!subtitleVisible) {
+      setBlurRevealed(false);
+    }
+  }, [subtitleVisible]);
+
+  const { onMouseMove: hoverPauseMouseMove, onMouseLeave: hoverPauseLeave } =
+    hoverPause;
+
+  // Reveal on real mouse movement, like the hover pause: Chrome also fires
+  // mouseenter/mousemove when a new line appears under a resting cursor.
+  const handleSubtitleMouseMove = useCallback(
+    (event: ReactMouseEvent<HTMLDivElement>) => {
+      hoverPauseMouseMove(event);
+      if (event.movementX !== 0 || event.movementY !== 0) {
+        setBlurRevealed(true);
+      }
+    },
+    [hoverPauseMouseMove]
+  );
+
+  const handleSubtitleMouseLeave = useCallback(() => {
+    hoverPauseLeave();
+    setBlurRevealed(false);
+  }, [hoverPauseLeave]);
+
+  const toggleBlurSubtitles = useCallback(() => {
+    const blurSubtitles = !settings.blurSubtitles;
+    setSettings((prev) => ({ ...prev, blurSubtitles }));
+    chrome.runtime
+      .sendMessage({ type: "LT2_SET_SETTINGS", payload: { blurSubtitles } })
+      .catch((error) => {
+        console.error("[LingText] Failed to save blur setting:", error);
+      });
+  }, [settings.blurSubtitles]);
+
   const handleWordClick = useCallback(
     async (word: string, lower: string, x: number, y: number) => {
       const lookupSeq = wordLookupSeqRef.current + 1;
@@ -908,6 +951,10 @@ export default function OverlayRoot({ shadowRoot }: OverlayRootProps) {
     return null;
   }
 
+  // Keep the line readable while one of its popups is open.
+  const isBlurred =
+    settings.blurSubtitles && !blurRevealed && !popup && !selectionPopup;
+
   return (
     <div
       ref={containerRef}
@@ -924,7 +971,7 @@ export default function OverlayRoot({ shadowRoot }: OverlayRootProps) {
       onMouseUp={handleMouseUp}
     >
       <div
-        className={`lingtext-container ${isTransitioning ? "lingtext-transitioning" : ""}`}
+        className={`lingtext-container ${isTransitioning ? "lingtext-transitioning" : ""} ${isBlurred ? "lingtext-blurred" : ""}`}
         style={{
           transform: `translate(calc(-50% + ${subtitleOffset.x}px), ${subtitleOffset.y}px)`,
         }}
@@ -942,6 +989,53 @@ export default function OverlayRoot({ shadowRoot }: OverlayRootProps) {
           onMouseUp={(event) => event.stopPropagation()}
         >
           <span className="lingtext-drag-handle-dots" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className={`lingtext-blur-toggle ${settings.blurSubtitles ? "lingtext-blur-toggle-active" : ""}`}
+          aria-pressed={settings.blurSubtitles}
+          aria-label="Desenfocar subtítulos"
+          title={
+            settings.blurSubtitles
+              ? "Subtítulos desenfocados: pasa el ratón para leerlos. Clic para mostrarlos siempre"
+              : "Desenfocar subtítulos para practicar la escucha"
+          }
+          onClick={(event) => {
+            event.stopPropagation();
+            toggleBlurSubtitles();
+          }}
+          onMouseUp={(event) => event.stopPropagation()}
+        >
+          {settings.blurSubtitles ? (
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path
+                d="M2 2l12 12M6.6 6.7a2 2 0 0 0 2.7 2.7M4.4 4.6C2.9 5.6 1.8 7 1.5 8c.7 2 3.2 4.5 6.5 4.5 1.3 0 2.5-.4 3.5-1M7 3.6c.3 0 .7-.1 1-.1 3.3 0 5.8 2.5 6.5 4.5-.3.8-.8 1.7-1.5 2.4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path
+                d="M1.5 8c.7-2 3.2-4.5 6.5-4.5s5.8 2.5 6.5 4.5c-.7 2-3.2 4.5-6.5 4.5S2.2 10 1.5 8z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+              <circle
+                cx="8"
+                cy="8"
+                r="2"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+            </svg>
+          )}
         </button>
         {loopCue && (
           <button
@@ -977,8 +1071,8 @@ export default function OverlayRoot({ shadowRoot }: OverlayRootProps) {
           phrases={phrases}
           onWordClick={handleWordClick}
           onMouseEnter={hoverPause.onMouseEnter}
-          onMouseMove={hoverPause.onMouseMove}
-          onMouseLeave={hoverPause.onMouseLeave}
+          onMouseMove={handleSubtitleMouseMove}
+          onMouseLeave={handleSubtitleMouseLeave}
         />
       </div>
 

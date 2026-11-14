@@ -148,6 +148,24 @@ export default function Popup() {
                 }
               />
             </label>
+            <label className="toggle-row">
+              <span className="toggle-text">
+                <span className="toggle-label">Desenfocar subtítulos</span>
+                <span className="toggle-hint">
+                  Practica solo escuchando; pasa el ratón por el subtítulo para
+                  leerlo. También con el botón del ojo junto al subtítulo.
+                </span>
+              </span>
+              <input
+                type="checkbox"
+                role="switch"
+                className="toggle-input"
+                checked={settings.blurSubtitles}
+                onChange={(event) =>
+                  updateSettings({ blurSubtitles: event.target.checked })
+                }
+              />
+            </label>
           </div>
         </section>
 
@@ -159,6 +177,9 @@ export default function Popup() {
             <li>Guarda palabras y frases para repasarlas</li>
             {settings.pauseOnHover && (
               <li>Pasa el ratón por el subtítulo para pausar el vídeo</li>
+            )}
+            {settings.blurSubtitles && (
+              <li>Pasa el ratón por el subtítulo desenfocado para leerlo</li>
             )}
           </ol>
           {settings.listeningShortcuts && (

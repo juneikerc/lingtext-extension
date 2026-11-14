@@ -24,6 +24,10 @@ phrase to translate it whole, and save what you want to learn.
   current line until you press it again or seek away. They need the captured
   transcript's timings, so they are off when the overlay falls back to
   reading YouTube's rendered captions. Can be turned off in the popup.
+- Blur mode for listening practice: the eye button next to the subtitle's
+  drag handle blurs the text, and moving the mouse over the subtitle reveals
+  it (it stays readable while a word or phrase popup is open). Also in the
+  popup.
 - Phrase translation by selecting several words.
 - Line-by-line subtitles, including YouTube's auto-generated captions.
 - Save words and phrases; saved words are highlighted when they appear again.
@@ -93,7 +97,7 @@ Load the extension from `chrome://extensions` → **Developer mode** →
 
 ### Releasing
 
-1. Bump `version` in `manifest.json` and `package.json`.
+1. Bump `version` in `manifest.json`, `package.json` and `package-lock.json`.
 2. Tag the commit (`git tag v1.5 && git push --tags`).
 3. CI builds the package and attaches the zip to a GitHub Release, ready to
    upload to the Chrome Web Store.

@@ -34,6 +34,7 @@ const STYLES = `
   background: rgba(10, 10, 10, 0.72);
   color: rgba(255, 255, 255, 0.78);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  vertical-align: middle;
   cursor: grab;
   pointer-events: auto;
   touch-action: none;
@@ -56,6 +57,48 @@ const STYLES = `
   border-radius: 999px;
   background: currentColor;
   box-shadow: -8px 0 currentColor, 8px 0 currentColor;
+}
+
+.lingtext-blur-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 18px;
+  margin: 0 0 6px 6px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(10, 10, 10, 0.72);
+  color: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  vertical-align: middle;
+  cursor: pointer;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.lingtext-blur-toggle svg {
+  width: 13px;
+  height: 13px;
+}
+
+.lingtext-blur-toggle:hover {
+  color: #ffffff;
+}
+
+.lingtext-blur-toggle-active {
+  border-color: rgba(15, 158, 218, 0.55);
+  color: #7dd3fc;
+}
+
+.lingtext-blur-toggle-active:hover {
+  color: #bae6fd;
+}
+
+.lingtext-blur-toggle:focus-visible {
+  outline: 2px solid rgba(15, 158, 218, 0.75);
+  outline-offset: 2px;
 }
 
 .lingtext-loop-badge {
@@ -123,6 +166,15 @@ const STYLES = `
   cursor: pointer;
   border-radius: 2px;
   transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.lingtext-subtitle-overlay > span {
+  transition: filter 0.15s ease, background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.lingtext-blurred .lingtext-subtitle-overlay > span {
+  filter: blur(7px);
 }
 
 .lingtext-word:hover {
